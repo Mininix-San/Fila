@@ -90,7 +90,7 @@
         
         clientRow.innerHTML = `
             <input type="text" placeholder="Nome no Discord" id="discord-${clientId}" value="${discordName}">
-            <input type="text" placeholder="Nickname no Jogo" id="nickname-${clientId}" value="${nickname}">
+            <input type="text" placeholder="Nickname no Jogo (Opcional)" id="nickname-${clientId}" value="${nickname}">
             <button onclick="markAsDone(${clientId})">Verificar</button>
             <span id="verified-${clientId}" class="verified">${verified ? '✔️' : ''}</span>
         `;
@@ -110,10 +110,10 @@
         for (let i = 0; i < clientList.length; i++) {
             const discordName = clientList[i].querySelector('input[id^="discord"]').value;
             const nickname = clientList[i].querySelector('input[id^="nickname"]').value;
-            const verified = clientList[i].querySelector('.verified').innerHTML ? true : false; // Verificar se tem o emoji
+            const verified = clientList[i].querySelector('.verified').innerHTML ? true : false;
 
-            if (discordName && nickname) {
-                output += `${discordName},${nickname},${verified}\n`;
+            if (discordName) { // Nickname é opcional, DiscordName é obrigatório
+                output += `${discordName},${nickname || 'Nenhum'},${verified}\n`;
             }
         }
         
@@ -127,7 +127,7 @@
             const rows = text.trim().split('\n');
             rows.forEach(row => {
                 const [discordName, nickname, verified] = row.split(',');
-                addClientRow(discordName, nickname, verified === 'true');
+                addClientRow(discordName, nickname === 'Nenhum' ? '' : nickname, verified === 'true');
             });
             alert('Lista colada com sucesso!');
         });
