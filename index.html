@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-image: url('https://r4.wallpaperflare.com/wallpaper/671/31/673/tv-show-star-vs-the-forces-of-evil-star-butterfly-wallpaper-a920088dc10a7dfbd63728bff031867d.jpg'); /* Adicione o caminho da imagem de fundo aqui */
+            background-image: url('https://r4.wallpaperflare.com/wallpaper/671/31/673/tv-show-star-vs-the-forces-of-evil-star-butterfly-wallpaper-a920088dc10a7dfbd63728bff031867d.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -17,7 +17,7 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background: rgba(255, 192, 203, 0.8); /* Fundo rosa transparente */
+            background: rgba(255, 192, 203, 0.8);
             border-radius: 15px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -92,6 +92,7 @@
             <input type="text" placeholder="Nome no Discord" id="discord-${clientId}" value="${discordName}">
             <input type="text" placeholder="Nickname no Jogo (Opcional)" id="nickname-${clientId}" value="${nickname}">
             <button onclick="markAsDone(${clientId})">Verificar</button>
+            <button onclick="removeClient(${clientId})">Remover</button>
             <span id="verified-${clientId}" class="verified">${verified ? '✔️' : ''}</span>
         `;
         
@@ -101,6 +102,11 @@
     function markAsDone(id) {
         const verifiedIcon = document.getElementById(`verified-${id}`);
         verifiedIcon.innerHTML = '✔️';  // Emoji de verificado
+    }
+
+    function removeClient(id) {
+        const clientRow = document.getElementById(`client-${id}`);
+        clientRow.remove();  // Remove a linha do cliente
     }
 
     function copyList() {
@@ -122,16 +128,16 @@
         });
     }
 
-   function pasteList() {
-    navigator.clipboard.readText().then(text => {
-        const rows = text.trim().split('\n');
-        rows.forEach(row => {
-            const [discordName, nickname, verified] = row.split(',');
-            addClientRow(discordName, nickname === 'Nenhum' ? '' : nickname, verified.trim() === 'true');  // Certifique-se de que 'true' esteja sendo comparado corretamente
+    function pasteList() {
+        navigator.clipboard.readText().then(text => {
+            const rows = text.trim().split('\n');
+            rows.forEach(row => {
+                const [discordName, nickname, verified] = row.split(',');
+                addClientRow(discordName, nickname === 'Nenhum' ? '' : nickname, verified.trim() === 'true');
+            });
+            alert('Lista colada com sucesso!');
         });
-        alert('Lista colada com sucesso!');
-    });
-}
+    }
 </script>
 
 </body>
