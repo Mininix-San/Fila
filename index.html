@@ -122,16 +122,16 @@
         });
     }
 
-    function pasteList() {
-        navigator.clipboard.readText().then(text => {
-            const rows = text.trim().split('\n');
-            rows.forEach(row => {
-                const [discordName, nickname, verified] = row.split(',');
-                addClientRow(discordName, nickname === 'Nenhum' ? '' : nickname, verified === 'true');
-            });
-            alert('Lista colada com sucesso!');
+   function pasteList() {
+    navigator.clipboard.readText().then(text => {
+        const rows = text.trim().split('\n');
+        rows.forEach(row => {
+            const [discordName, nickname, verified] = row.split(',');
+            addClientRow(discordName, nickname === 'Nenhum' ? '' : nickname, verified.trim() === 'true');  // Certifique-se de que 'true' esteja sendo comparado corretamente
         });
-    }
+        alert('Lista colada com sucesso!');
+    });
+}
 </script>
 
 </body>
