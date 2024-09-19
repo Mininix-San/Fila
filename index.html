@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Fila</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url(''); /* Adicione o caminho da imagem de fundo aqui */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 192, 203, 0.8); /* Fundo rosa transparente */
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            font-family: 'Comic Sans MS', cursive;
+            color: #ff69b4;
+        }
+        .client-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            background: rgba(255, 105, 180, 0.3);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .client-row input[type="text"] {
+            width: 40%;
+            padding: 5px;
+            border: 2px solid #ff69b4;
+            border-radius: 5px;
+        }
+        .client-row button {
+            padding: 5px 10px;
+            background-color: #ff69b4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .client-row button:hover {
+            background-color: #ff1493;
+        }
+        .verified {
+            font-size: 18px;
+            color: lime;
+            margin-left: 10px;
+        }
+        .client-list {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Painel de Fila</h1>
+
+    <div id="clientList" class="client-list">
+        <!-- Linhas de cliente serão adicionadas aqui -->
+    </div>
+
+    <button onclick="addClientRow()">Adicionar Cliente</button>
+    <button onclick="copyList()">Copiar Lista</button>
+    <button onclick="pasteList()">Colar Lista</button>
+
+</div>
+
+<script>
+    let clientId = 0;
+
+    function addClientRow(discordName = '', nickname = '', verified = false) {
+        clientId++;
+        const clientList = document.getElementById('clientList');
+        const clientRow = document.createElement('div');
+        clientRow.className = 'client-row';
+        clientRow.id = `client-${clientId}`;
+        
+        clientRow.innerHTML = `
+            <input type="text" placeholder="Nome no Discord" id="discord-${clientId}" value="${discordName}">
+            <input type="text" placeholder="Nickname no Jogo" id="nickname-${clientId}" value="${nickname}">
+            <button onclick="markAsDone(${clientId})">Verificar</button>
+            <span id="verified-${clientId}" class="verified">${verified ? '✔️' : ''}</span>
+        `;
+        
+        clientList.appendChild(clientRow);
+    }
+
+    function markAsDone(id) {
+        const verifiedIcon = document.getElementById(`verified-${id}`);
+        verifiedIcon.innerHTML = '✔️';  // Emoji de verificado
+    }
+
+    function copyList() {
+        const clientList = document.getElementById('clientList').children;
+        let output = '';
+        
+        for (let i = 0; i < clientList.length; i++) {
+            const discordName = clientList[i].querySelector('input[id^="discord"]').value;
+            const nickname = clientList[i].querySelector('input[id^="nickname"]').value;
+            const verified = clientList[i].querySelector('.verified').innerHTML ? true : false; // Verificar se tem o emoji
+
+            if (discordName && nickname) {
+                output += `${discordName},${nickname},${verified}\n`;
+            }
+        }
+        
+        navigator.clipboard.writeText(output).then(() => {
+            alert('Lista copiada!');
+        });
+    }
+
+    function pasteList() {
+        navigator.clipboard.readText().then(text => {
+            const rows = text.trim().split('\n');
+            rows.forEach(row => {
+                const [discordName, nickname, verified] = row.split(',');
+                addClientRow(discordName, nickname, verified === 'true');
+            });
+            alert('Lista colada com sucesso!');
+        });
+    }
+</script>
+
+</body>
+</html>
