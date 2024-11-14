@@ -1,144 +1,264 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Fila</title>
+    <title>Sistema de Anotações</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-image: url('https://r4.wallpaperflare.com/wallpaper/671/31/673/tv-show-star-vs-the-forces-of-evil-star-butterfly-wallpaper-a920088dc10a7dfbd63728bff031867d.jpg');
+            background-image: url('https://lh3.googleusercontent.com/d/1aZkNtHRKeVqDytyKIFauJ9TqPyFSAsv3');
             background-size: cover;
-            background-position: center;
+            background-repeat: no-repeat;
             background-attachment: fixed;
-            color: #fff;
+            font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+            color: #ddd;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
         }
+
         .container {
-            max-width: 600px;
-            margin: 0 auto;
+            width: 80%;
+            margin: 20px auto;
+            background-color: rgba(33, 33, 33, 0.9);
             padding: 20px;
-            background: rgba(255, 192, 203, 0.8);
             border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            max-height: 80vh; /* Limita a altura da caixa */
+            overflow-y: auto; /* Permite rolagem vertical */
         }
-        h1 {
-            text-align: center;
-            font-family: 'Comic Sans MS', cursive;
-            color: #ff69b4;
-        }
-        .client-row {
+
+        .client-entry {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            background: rgba(255, 105, 180, 0.3);
+            margin: 10px 0;
             padding: 10px;
+            border: 2px solid #00ff0c;
             border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
         }
-        .client-row input[type="text"] {
-            width: 40%;
+
+        .client-entry input {
+            margin-right: 10px;
             padding: 5px;
-            border: 2px solid #ff69b4;
+            border: 1px solid #00ff0c;
             border-radius: 5px;
+            color: #ddd;
+            background-color: #444;
         }
-        .client-row button {
+
+        .client-entry button {
+            margin-left: 5px;
             padding: 5px 10px;
-            background-color: #ff69b4;
-            color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
+            color: white;
         }
-        .client-row button:hover {
-            background-color: #ff1493;
+
+        .confirm-button {
+            background-color: #0ba118;
         }
-        .verified {
-            font-size: 18px;
-            color: lime;
-            margin-left: 10px;
+
+        .cancel-button {
+            background-color: red;
         }
-        .client-list {
+
+        .verificado-button {
+            background-color: blue;
+        }
+
+        .add-client {
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #ff0000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .copy-paste {
             margin-top: 20px;
         }
-    </style>
-</head>
-<body>
 
-<div class="container">
-    <h1>Painel de Fila</h1>
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            pointer-events: none;
+        }
 
-    <div id="clientList" class="client-list">
-        <!-- Linhas de cliente serão adicionadas aqui -->
-    </div>
-
-    <button onclick="addClientRow()">Adicionar Cliente</button>
-    <button onclick="copyList()">Copiar Lista</button>
-    <button onclick="pasteList()">Colar Lista</button>
-
-</div>
-
-<script>
-    let clientId = 0;
-
-    function addClientRow(discordName = '', nickname = '', verified = false) {
-        clientId++;
-        const clientList = document.getElementById('clientList');
-        const clientRow = document.createElement('div');
-        clientRow.className = 'client-row';
-        clientRow.id = `client-${clientId}`;
-        
-        clientRow.innerHTML = `
-            <input type="text" placeholder="Nome no Discord" id="discord-${clientId}" value="${discordName}">
-            <input type="text" placeholder="Nickname no Jogo (Opcional)" id="nickname-${clientId}" value="${nickname}">
-            <button onclick="markAsDone(${clientId})">Verificar</button>
-            <button onclick="removeClient(${clientId})">Remover</button>
-            <span id="verified-${clientId}" class="verified">${verified ? '✔️' : ''}</span>
-        `;
-        
-        clientList.appendChild(clientRow);
-    }
-
-    function markAsDone(id) {
-        const verifiedIcon = document.getElementById(`verified-${id}`);
-        verifiedIcon.innerHTML = '✔️';  // Emoji de verificado
-    }
-
-    function removeClient(id) {
-        const clientRow = document.getElementById(`client-${id}`);
-        clientRow.remove();  // Remove a linha do cliente
-    }
-
-    function copyList() {
-        const clientList = document.getElementById('clientList').children;
-        let output = '';
-        
-        for (let i = 0; i < clientList.length; i++) {
-            const discordName = clientList[i].querySelector('input[id^="discord"]').value;
-            const nickname = clientList[i].querySelector('input[id^="nickname"]').value;
-            const verified = clientList[i].querySelector('.verified').innerHTML ? true : false;
-
-            if (discordName) { // Nickname é opcional, DiscordName é obrigatório
-                output += `${discordName},${nickname || 'Nenhum'},${verified}\n`;
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
             }
         }
-        
-        navigator.clipboard.writeText(output).then(() => {
-            alert('Lista copiada!');
-        });
-    }
+    </style>
+    <script>
+        let clientCount = 0;
 
-    function pasteList() {
-        navigator.clipboard.readText().then(text => {
-            const rows = text.trim().split('\n');
-            rows.forEach(row => {
-                const [discordName, nickname, verified] = row.split(',');
-                addClientRow(discordName, nickname === 'Nenhum' ? '' : nickname, verified.trim() === 'true');
+        function addClient() {
+            clientCount++;
+            const clientList = document.getElementById('clientList');
+            const clientEntry = document.createElement('div');
+            clientEntry.classList.add('client-entry');
+            clientEntry.innerHTML = `
+                <input type="text" placeholder="Nome do Cliente" id="clientName${clientCount}">
+                <input type="number" placeholder="Valor" id="clientValue${clientCount}">
+                <select id="currency${clientCount}">
+                    <option value="R$">R$</option>
+                    <option value="$">$</option>
+                </select>
+                <button class="confirm-button" onclick="togglePayment(${clientCount}, 'yes')">Sim</button>
+                <button class="cancel-button" onclick="togglePayment(${clientCount}, 'no')">Não</button>
+                <span id="paymentStatus${clientCount}" style="margin-left: 10px; color: red;">Não Pago</span>
+                <select id="supplier${clientCount}" onchange="updateSupplier(${clientCount})">
+                    <option value="">Fornecedor</option>
+                    <option value="Pearl">Pearl</option>
+                    <option value="Daodao">Daodao</option>
+                    <option value="Dog">Dog</option>
+                    <option value="LBW">LBW</option>
+                    <option value="DW">DW</option>
+                    <option value="Cow">Cow</option>
+                </select>
+                <button onclick="removeClient(this)">🗑️</button>
+                <button class="verificado-button" onclick="markCompleted(this)">✔️</button>
+                <span id="completionStatus${clientCount}" style="margin-left: 10px; color: red;">Não Concluído</span>
+            `;
+            clientList.appendChild(clientEntry);
+        }
+
+        function togglePayment(clientId, status) {
+            const paymentStatus = document.getElementById(`paymentStatus${clientId}`);
+            paymentStatus.innerText = (status === 'yes') ? 'Pago' : 'Não Pago';
+            paymentStatus.style.color = (status === 'yes') ? 'green' : 'red';
+        }
+
+        function removeClient(button) {
+            const clientEntry = button.parentElement;
+            clientEntry.remove();
+        }
+
+        function markCompleted(button) {
+            const clientEntry = button.parentElement;
+            clientEntry.style.textDecoration = "line-through";
+            const completionStatus = clientEntry.querySelector(`span[id^="completionStatus"]`);
+            completionStatus.innerText = 'Concluído';
+            completionStatus.style.color = 'green';
+        }
+
+        function copyNotes() {
+            const clientList = document.getElementById('clientList');
+            const notesArray = Array.from(clientList.children).map(client => {
+                const name = client.querySelector('input[type="text"]').value;
+                const value = client.querySelector('input[type="number"]').value;
+                const paymentStatus = client.querySelector('span[id^="paymentStatus"]').innerText;
+                const supplier = client.querySelector('select[id^="supplier"]').value;
+                const currency = client.querySelector('select[id^="currency"]').value;
+                const completionStatus = client.querySelector('span[id^="completionStatus"]').innerText;
+                return `Cliente: ${name}, Valor: ${value} ${currency}, Pago: ${paymentStatus}, Fornecedor: ${supplier}, Status: ${completionStatus}`;
+            }).join('\n');
+            navigator.clipboard.writeText(notesArray)
+                .then(() => alert('Notas copiadas para a área de transferência'))
+                .catch(err => alert('Erro ao copiar texto: ', err));
+        }
+
+        function pasteNotes() {
+            navigator.clipboard.readText()
+                .then(text => {
+                    const lines = text.split('\n');
+                    lines.forEach(line => {
+                        if (line.trim()) {
+                            const parts = line.split(', ');
+                            const namePart = parts[0].split(': ')[1];
+                            const valuePart = parts[1].split(': ')[1].split(' ')[0]; // Obtem apenas o valor
+                            const currencyPart = parts[1].split(': ')[1].split(' ')[1]; // Obtem a moeda
+                            const paymentPart = parts[2].split(': ')[1];
+                            const supplierPart = parts[3].split(': ')[1];
+                            const completionPart = parts[4].split(': ')[1];
+
+                            const clientList = document.getElementById('clientList');
+                            const clientEntry = document.createElement('div');
+                            clientEntry.classList.add('client-entry');
+                            clientEntry.innerHTML = `
+                                <input type="text" placeholder="Nome do Cliente" value="${namePart}">
+                                <input type="number" placeholder="Valor" value="${valuePart}">
+                                <select id="currency${clientCount}">
+                                    <option value="${currencyPart}" selected>${currencyPart}</option>
+                                    <option value="R$">R$</option>
+                                    <option value="$">$</option>
+                                </select>
+                                <button class="confirm-button" onclick="togglePayment(${clientCount}, 'yes')">Sim</button>
+                                <button class="cancel-button" onclick="togglePayment(${clientCount}, 'no')">Não</button>
+                                <span id="paymentStatus${clientCount}" style="margin-left: 10px; color: ${paymentPart === 'Pago' ? 'green' : 'red'};">${paymentPart}</span>
+                                <select id="supplier${clientCount}" onchange="updateSupplier(${clientCount})">
+                                    <option value="${supplierPart}" selected>${supplierPart}</option>
+                                    <option value="Pearl">Pearl</option>
+                                    <option value="Daodao">Daodao</option>
+                                    <option value="Dog">Dog</option>
+                                    <option value="LBW">LBW</option>
+                                    <option value="DW">DW</option>
+                                    <option value="Cow">Cow</option>
+                                </select>
+                                <button onclick="removeClient(this)">🗑️</button>
+                                <button class="verificado-button" onclick="markCompleted(this)">✔️</button>
+                                <span id="completionStatus${clientCount}" style="margin-left: 10px; color: ${completionPart === 'Concluído' ? 'green' : 'red'};">${completionPart}</span>
+                            `;
+                            clientList.appendChild(clientEntry);
+                            clientCount++;
+                        }
+                    });
+                })
+                .catch(err => alert('Erro ao colar texto: ', err));
+        }
+
+        function updateSupplier(clientId) {
+            // Atualiza o fornecedor, se necessário
+        }
+
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.style.width = Math.random() * 10 + 5 + 'px'; // Tamanho aleatório
+            snowflake.style.height = snowflake.style.width; // Mantém forma circular
+            snowflake.style.left = Math.random() * 100 + 'vw'; // Posição aleatória na horizontal
+            document.body.appendChild(snowflake);
+
+            // Animação de queda
+            const fallDuration = Math.random() * 3 + 2; // Dura entre 2 e 5 segundos
+            snowflake.style.animation = `fall ${fallDuration}s linear forwards`;
+
+            // Remove o floco de neve após a animação
+            snowflake.addEventListener('animationend', () => {
+                snowflake.remove();
             });
-            alert('Lista colada com sucesso!');
-        });
-    }
-</script>
+        }
 
+        // Chama a função para criar flocos de neve a cada 300ms
+        setInterval(createSnowflake, 300);
+
+        window.onload = function() {
+            // Inicialização se necessário
+        }
+    </script>
+</head>
+<body>
+    <button class="add-client" onclick="addClient()">Adicionar Cliente</button>
+    <div class="container">
+        <div id="clientList">
+            <!-- As entradas dos clientes serão adicionadas aqui -->
+        </div>
+        <div class="copy-paste">
+            <button onclick="copyNotes()">Copiar Notas</button>
+            <button onclick="pasteNotes()">Colar Notas</button>
+        </div>
+    </div>
 </body>
 </html>
